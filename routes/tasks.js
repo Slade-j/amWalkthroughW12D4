@@ -69,6 +69,18 @@ router.put('/:id(\\d+)', validateTask, handleValidateionErrors, asyncHandler(asy
     }
 }));
 
+router.delete('/:id(\\d+)', asyncHandler(async (req, res, next) => {
+    const taskId = parsInt(req.params.id, 10);
+    const task = await Task.findByPk(taskId);
+
+    if (task) {
+        await Task.destroy();
+        res.status(204).end();
+    } else {
+        next(taskNotFoundError(taskId));
+    }
+}));
+
 router.post('/', validateTask, handleValidateionErrors, asyncHandler(async (req, res) => {
     const { name } = req.body;
     const task = await Task.create({ name });
